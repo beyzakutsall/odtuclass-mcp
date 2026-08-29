@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "odtuclass": {
+      "command": "c:/Users/Asus/Documents/Development/repos/metu-odtuclass-mcp/.venv/Scripts/python.exe",
+      "args": [
+        "c:/Users/Asus/Documents/Development/repos/metu-odtuclass-mcp/odtuclass_mcp.py"
+      ],
+      "env": {
+        "ODTUCLASS_BASE_URL": "https://odtuclass2025s.metu.edu.tr"
+      }
+    }
+  }
+}

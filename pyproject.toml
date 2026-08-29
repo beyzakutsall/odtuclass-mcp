@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metu-odtuclass-mcp"
+version = "0.1.0"
+description = "ODTUClass (METU Moodle) FastMCP Server for AI Agents"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0",
+    "beautifulsoup4>=4.12.0",
+    "python-dateutil>=2.8.2",
+]
+
+[project.scripts]
+odtuclass-mcp = "odtuclass_mcp:main"

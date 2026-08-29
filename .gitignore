@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Environment & Local Secrets
+.env
+.env.*
+.env.local
+*.env
+
+# ODTUClass Session Cache & Downloads
+.odtuclass_cache/
+downloads/
+.downloads/

@@ -7,6 +7,14 @@ HTML sanitization, and data extraction for ODTUClass (odtuclass.metu.edu.tr).
 import os
 import re
 import html
+from urllib.parse import urlparse
+
+def _validate_metu_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or not parsed.netloc.endswith(".metu.edu.tr"):
+        raise ValueError(f"Guvenlik engeli: Yetkisiz alan adi -> {url}")
+    return url
+
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -153,6 +161,8 @@ class ODTUClassClient:
 
     def __init__(self, base_url: Optional[str] = None, timeout: float = 20.0):
         raw_url = (base_url or os.getenv("ODTUCLASS_BASE_URL") or DEFAULT_ODTUCLASS_URL).rstrip("/")
+        if raw_url:
+            raw_url = _validate_metu_url(raw_url)
         self.raw_base_url = raw_url
         self._resolved_base_url: Optional[str] = None
         self.timeout = timeout
@@ -264,6 +274,8 @@ class ODTUClassClient:
         """
         token = self._resolve_token(student_token)
         url = file_url
+        token = self._resolve_token(student_token)
+        url = _validate_metu_url(file_url)
         if token and "token=" not in url:
             sep = "&" if "?" in url else "?"
             url = f"{url}{sep}token={token}"
@@ -554,11 +566,13 @@ class ODTUClassClient:
                     if not isinstance(att, dict):
                         continue
                     file_url = att.get("fileurl", "")
-                    if file_url and "token=" not in file_url:
+                    if file_url:
+                        file_url = _validate_metu_url(file_url)
+                        if file_url and "token=" not in file_url:
                         # Append token for direct authenticated download if needed
-                        token = self._resolve_token(student_token)
-                        sep = "&" if "?" in file_url else "?"
-                        file_url = f"{file_url}{sep}token={token}"
+                            token = self._resolve_token(student_token)
+                            sep = "&" if "?" in file_url else "?"
+                            file_url = f"{file_url}{sep}token={token}"
 
                     attachments_list.append(
                         AnnouncementAttachment(
@@ -662,10 +676,12 @@ class ODTUClassClient:
                 for c_item in mod_contents:
                     file_name = c_item.get("filename", "")
                     file_url = c_item.get("fileurl", "")
-                    if file_url and "token=" not in file_url:
-                        token = self._resolve_token(student_token)
-                        sep = "&" if "?" in file_url else "?"
-                        file_url = f"{file_url}{sep}token={token}"
+                    if file_url:
+                        file_url = _validate_metu_url(file_url)
+                        if "token=" not in file_url:
+                            token = self._resolve_token(student_token)
+                            sep = "&" if "?" in file_url else "?"
+                            file_url = f"{file_url}{sep}token={token}"
 
                     file_matches = any(k in file_name.lower() for k in syllabus_keywords)
                     if mod_matches or file_matches:

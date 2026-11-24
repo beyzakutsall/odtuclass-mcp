@@ -227,3 +227,5 @@ __marimo__/
 .odtuclass_cache/
 downloads/
 .downloads/
+.env
+.odtuclass_cache/
